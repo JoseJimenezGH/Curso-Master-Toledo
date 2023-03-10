@@ -1,0 +1,6 @@
+df<-y
+porcentaje<-20
+while(sum(is.na(df) == TRUE) < (dim(df)[1] * dim(df)[2] * porcentaje/100)){
+  df[sample(dim(df)[1],1), sample(dim(df)[2],1)] <- NA
+}
+y<-df
