@@ -1,18 +1,18 @@
 #==============================================================================#
 #                                                                              #
-#                        Modelos de Ocupación                                  #
+#                        Modelos de OcupaciÃ³n                                  #
 #                       Jose Jimenez. CSIC-IREC                                #
 #                        09/03/2023 17:54:46                                   #
 #                          MASTER UCLM 2023                                    #
 #                                                                              #
 #                                                                              #
 #==============================================================================#
-setwd('C:/Users/Usuario/OneDrive/00 Master Seguimiento de la Diversidad Biológica 2023/Curso/AulaVirtual/01 Modelos de Ocupacion/Ejercicio')
+setwd('C:/Users/Usuario/OneDrive/00 Master Seguimiento de la Diversidad BiolÃ³gica 2023/AulaVirtual/01 Modelos de Ocupacion/Ejercicio')
 
 y<-read.table("DatosPresencia.txt", header=TRUE)
 
 
-# Estima naïve
+# Estima naÃ¯ve
 sum(apply(y,1,max,na.rm=TRUE))/dim(y)[1]
 
 ### Definicion del modelo
@@ -59,7 +59,7 @@ start.time2<-Sys.time()
 fm2 <- jags(win.data, inits, params, "model.txt", n.chains = nc,
    n.thin = nt, n.iter = ni, n.burnin = nb, parallel=TRUE)
 end.time<-Sys.time()
-end.time-start.time2 # tiempo de ejecución
+end.time-start.time2 # tiempo de ejecuciÃ³n
 
 #  Vemos resultados
 print(fm2, dig = 3)
@@ -67,3 +67,37 @@ print(fm2, dig = 3)
 library(lattice)
 xyplot(fm2$samples)
 densityplot(fm2$samples)
+
+
+# UTILIZANDO UNMARKED:
+#=====================
+library(unmarked)
+
+umf <- unmarkedFrameOccu(y=y, siteCovs=NULL, 
+    obsCovs=NULL)       # organizamos los datos
+umf
+plot(umf, panels=1)
+summary(umf)            # resumen de los datos      
+fm <- occu(~1 ~1, umf)  # ajustamos el modelo
+
+# Para extraer los valores a escala real, con sus IC:
+(btlp<-backTransform(fm, "det"))
+confint(btlp, level = 0.95)
+(btls<-backTransform(fm, "state"))
+confint(btls, level = 0.95)
+
+
+# Test de bondad del ajuste
+fitstats <- function(fm) {
+    observed <- getY(fm@data)
+    expected <- fitted(fm)
+    resids <- residuals(fm)
+    sse <- sum(resids^2)
+    chisq <- sum((observed - expected)^2 / expected)
+    freeTuke <- sum((sqrt(observed) - sqrt(expected))^2)
+    out <- c(SSE=sse, Chisq=chisq, freemanTukey=freeTuke)
+    return(out)
+    }
+
+(pb <- parboot(fm, fitstats, nsim=1000, report=1))
+plot(pb, main="")
