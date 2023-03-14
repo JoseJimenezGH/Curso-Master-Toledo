@@ -3,7 +3,7 @@
 #                           Modelos N-mixtos                                   #
 #                       Jose Jimenez. CSIC-IREC                                #
 #                        28/02/2020 10:14:57                                   #
-#                          MASTER TOLEDO 2020                                  #
+#                          MASTER TOLEDO 2023                                  #
 #                                                                              #
 #==============================================================================#
 
@@ -15,7 +15,7 @@
 ## MODELO SIMPLE CON *UNMARKED*
 ##==============================
 ### Simulacion de datos
-# Elegimos un tamaño de muestra y preparamos la matriz C
+# Elegimos un tamaÃ±o de muestra y preparamos la matriz C
 set.seed(24)                # Para repetir siempre la misma creacion de datos
 M <- 150                    # Numero de sitios
 J <- 4                      # Numero de relicas por sitios
@@ -43,13 +43,13 @@ for(j in 1:J){
 # Echemos un vistazo a los datos
 # La realidad ....
 table(N)                    # Verdadera distribucion de la abundancia
-sum(N)                      # Tamaño total de poblacion en los M sitios
+sum(N)                      # TamaÃ±o total de poblacion en los M sitios
 sum(N>0)                    # Numero real en los sitios ocupados
 mean(N)                     # Verdadera abundancia media (estima de lambda)
 
 #... y lo que observamos
 table(apply(C, 1, max))     # distribucion de la abundancia observada (max conteos)
-sum(apply(C, 1, max))       # Tamaño de la poblacion observada en los M sitios
+sum(apply(C, 1, max))       # TamaÃ±o de la poblacion observada en los M sitios
 sum(apply(C, 1, max)>0)     # Numero de sitios observados como ocupados
 mean(apply(C, 1, max))      # Media observada de la abundancia
 
@@ -81,8 +81,8 @@ backTransform(fm1, "state")               # y lo obtenemos a escala natural
 backTransform(fm1, "det")
 
 
-#... y podemos ver el resultado para cada sitio utilizando métodos bayesianos
-# empíricos
+#... y podemos ver el resultado para cada sitio utilizando mÃ©todos bayesianos
+# empÃ­ricos
 re<- ranef(fm1)
 plot(re, xlim = c(0,20))[sort(sample(1:100, 30))]
 # Para obtener los intervalos de confianza
